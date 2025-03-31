@@ -1,0 +1,423 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Styles -->
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .subtitle {
+      font-size: 16px;
+      text-anchor: middle;
+    }
+    .axis-label {
+      font-size: 14px;
+      text-anchor: middle;
+    }
+    .small-text {
+      font-size: 12px;
+    }
+    .word {
+      font-size: 14px;
+      text-anchor: middle;
+      cursor: pointer;
+    }
+    .button {
+      cursor: pointer;
+    }
+    .button rect {
+      rx: 5;
+      ry: 5;
+    }
+    .button:hover rect {
+      fill: #4488DD;
+    }
+    .tool-tip {
+      font-size: 14px;
+      visibility: hidden;
+    }
+    .similarity-line {
+      stroke-width: 2;
+      stroke-dasharray: 5,5;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa" />
+  
+  <!-- Title and Instructions -->
+  <text x="400" y="30" class="title">Vector Embeddings Playground</text>
+  <text x="400" y="55" class="subtitle">Explore how words are represented as points in space</text>
+  
+  <!-- Coordinate System -->
+  <g transform="translate(400, 300)">
+    <!-- Grid Lines -->
+    <line x1="-300" y1="0" x2="300" y2="0" stroke="#ccc" stroke-width="1" />
+    <line x1="0" y1="-200" x2="0" y2="200" stroke="#ccc" stroke-width="1" />
+    
+    <!-- Subtle Grid -->
+    <g stroke="#eee" stroke-width="0.5">
+      <line x1="-300" y1="-100" x2="300" y2="-100" />
+      <line x1="-300" y1="100" x2="300" y2="100" />
+      <line x1="-100" y1="-200" x2="-100" y2="200" />
+      <line x1="100" y1="-200" x2="100" y2="200" />
+    </g>
+    
+    <!-- Axes -->
+    <g stroke="#333" stroke-width="2">
+      <line x1="-300" y1="0" x2="300" y2="0" />
+      <line x1="0" y1="-200" x2="0" y2="200" />
+    </g>
+    
+    <!-- Axis Labels -->
+    <g id="axis-descriptions">
+      <text x="0" y="-180" class="axis-label">"Emotion" Dimension</text>
+      <text x="280" y="15" class="axis-label">"Size" Dimension</text>
+    </g>
+    
+    <!-- Initial Word Vectors -->
+    <g id="word-vectors">
+      <!-- Happy/Positive Group -->
+      <g transform="translate(120, -100)">
+        <circle cx="0" cy="0" r="8" fill="#4CAF50" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#4CAF50">happy</text>
+      </g>
+      <g transform="translate(100, -120)">
+        <circle cx="0" cy="0" r="8" fill="#4CAF50" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#4CAF50">joy</text>
+      </g>
+      <g transform="translate(140, -80)">
+        <circle cx="0" cy="0" r="8" fill="#4CAF50" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#4CAF50">excited</text>
+      </g>
+      
+      <!-- Sad/Negative Group -->
+      <g transform="translate(-120, -100)">
+        <circle cx="0" cy="0" r="8" fill="#F44336" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#F44336">sad</text>
+      </g>
+      <g transform="translate(-140, -80)">
+        <circle cx="0" cy="0" r="8" fill="#F44336" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#F44336">upset</text>
+      </g>
+      <g transform="translate(-100, -120)">
+        <circle cx="0" cy="0" r="8" fill="#F44336" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#F44336">gloomy</text>
+      </g>
+      
+      <!-- Large Objects -->
+      <g transform="translate(120, 100)">
+        <circle cx="0" cy="0" r="8" fill="#2196F3" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#2196F3">elephant</text>
+      </g>
+      <g transform="translate(140, 80)">
+        <circle cx="0" cy="0" r="8" fill="#2196F3" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#2196F3">mountain</text>
+      </g>
+      <g transform="translate(100, 120)">
+        <circle cx="0" cy="0" r="8" fill="#2196F3" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#2196F3">castle</text>
+      </g>
+      
+      <!-- Small Objects -->
+      <g transform="translate(-120, 100)">
+        <circle cx="0" cy="0" r="8" fill="#9C27B0" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#9C27B0">mouse</text>
+      </g>
+      <g transform="translate(-100, 120)">
+        <circle cx="0" cy="0" r="8" fill="#9C27B0" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#9C27B0">ant</text>
+      </g>
+      <g transform="translate(-140, 80)">
+        <circle cx="0" cy="0" r="8" fill="#9C27B0" opacity="0.8" />
+        <text x="0" y="-15" class="word" fill="#9C27B0">pebble</text>
+      </g>
+    </g>
+    
+    <!-- User Input Word -->
+    <g id="user-word" transform="translate(0, 0)" visibility="hidden">
+      <circle cx="0" cy="0" r="10" fill="#FF9800" stroke="#000" stroke-width="2" />
+      <text x="0" y="-20" class="word" fill="#FF9800" id="user-word-text">your word</text>
+    </g>
+    
+    <!-- Similarity Measure Lines -->
+    <g id="similarity-lines"></g>
+    
+    <!-- Tooltip -->
+    <g id="tooltip" transform="translate(0, 0)">
+      <rect x="-100" y="-50" width="200" height="40" fill="white" stroke="#333" stroke-width="1" rx="5" ry="5" opacity="0.9" />
+      <text x="0" y="-25" class="small-text" text-anchor="middle" id="tooltip-text">Select a word to see relations</text>
+    </g>
+  </g>
+  
+  <!-- Controls -->
+  <g transform="translate(50, 100)">
+    <text x="0" y="0" font-weight="bold">Select Example Word:</text>
+    
+    <!-- Word Buttons -->
+    <g class="button" transform="translate(0, 20)" id="btn-birthday">
+      <rect x="0" y="0" width="120" height="30" fill="#64B5F6" />
+      <text x="60" y="20" text-anchor="middle" fill="white">birthday</text>
+    </g>
+    
+    <g class="button" transform="translate(0, 60)" id="btn-kitten">
+      <rect x="0" y="0" width="120" height="30" fill="#64B5F6" />
+      <text x="60" y="20" text-anchor="middle" fill="white">kitten</text>
+    </g>
+    
+    <g class="button" transform="translate(0, 100)" id="btn-funeral">
+      <rect x="0" y="0" width="120" height="30" fill="#64B5F6" />
+      <text x="60" y="20" text-anchor="middle" fill="white">funeral</text>
+    </g>
+    
+    <g class="button" transform="translate(0, 140)" id="btn-whale">
+      <rect x="0" y="0" width="120" height="30" fill="#64B5F6" />
+      <text x="60" y="20" text-anchor="middle" fill="white">whale</text>
+    </g>
+    
+    <g class="button" transform="translate(0, 180)" id="btn-reset">
+      <rect x="0" y="0" width="120" height="30" fill="#FF5252" />
+      <text x="60" y="20" text-anchor="middle" fill="white">Reset</text>
+    </g>
+  </g>
+  
+  <!-- Explanation Panel -->
+  <g transform="translate(600, 100)">
+    <rect x="0" y="0" width="180" height="250" fill="white" stroke="#ccc" stroke-width="1" rx="5" ry="5" />
+    <text x="10" y="30" font-weight="bold">What are Vector Embeddings?</text>
+    <text x="10" y="60" class="small-text">Words are represented as</text>
+    <text x="10" y="80" class="small-text">points in multi-dimensional</text>
+    <text x="10" y="100" class="small-text">space. Similar words are</text>
+    <text x="10" y="120" class="small-text">closer together.</text>
+    
+    <text x="10" y="150" class="small-text">Each dimension captures</text>
+    <text x="10" y="170" class="small-text">a different aspect of</text>
+    <text x="10" y="190" class="small-text">meaning (like emotion,</text>
+    <text x="10" y="210" class="small-text">size, or context).</text>
+    
+    <text x="10" y="240" class="small-text" id="distance-info"></text>
+  </g>
+  
+  <!-- Interactive JavaScript -->
+  <script type="text/ecmascript"><![CDATA[
+    // SVG Element References
+    const userWord = document.getElementById('user-word');
+    const userWordText = document.getElementById('user-word-text');
+    const similarityLines = document.getElementById('similarity-lines');
+    const tooltip = document.getElementById('tooltip');
+    const tooltipText = document.getElementById('tooltip-text');
+    const distanceInfo = document.getElementById('distance-info');
+    
+    // Word Vectors (simplified 2D representation)
+    const wordVectors = {
+      // Example words with [x, y] coordinates
+      'birthday': [130, -110],
+      'kitten': [-80, 90],
+      'funeral': [-130, -110],
+      'whale': [130, 90]
+    };
+    
+    // Hide tooltip initially
+    tooltip.setAttribute('visibility', 'hidden');
+    
+    // Function to calculate Euclidean distance
+    function calculateDistance(point1, point2) {
+      const dx = point1[0] - point2[0];
+      const dy = point1[1] - point2[1];
+      return Math.sqrt(dx*dx + dy*dy);
+    }
+    
+    // Function to find closest words
+    function findClosestWords(targetVector, count = 3) {
+      const distances = [];
+      
+      // Word groups from the SVG
+      const wordGroups = {
+        'happy': [120, -100],
+        'joy': [100, -120],
+        'excited': [140, -80],
+        'sad': [-120, -100],
+        'upset': [-140, -80],
+        'gloomy': [-100, -120],
+        'elephant': [120, 100],
+        'mountain': [140, 80],
+        'castle': [100, 120],
+        'mouse': [-120, 100],
+        'ant': [-100, 120],
+        'pebble': [-140, 80]
+      };
+      
+      // Calculate distances
+      for (const word in wordGroups) {
+        const vector = wordGroups[word];
+        const distance = calculateDistance(targetVector, vector);
+        distances.push({ word, distance });
+      }
+      
+      // Sort by distance
+      distances.sort((a, b) => a.distance - b.distance);
+      
+      // Return closest words
+      return distances.slice(0, count);
+    }
+    
+    // Function to draw similarity lines
+    function drawSimilarityLines(targetVector, closestWords) {
+      // Clear previous lines
+      while (similarityLines.firstChild) {
+        similarityLines.removeChild(similarityLines.firstChild);
+      }
+      
+      // Create lines to closest words
+      closestWords.forEach((item, index) => {
+        const word = item.word;
+        const distance = item.distance;
+        
+        // Find the word element in the SVG
+        const wordGroups = document.querySelectorAll('#word-vectors g');
+        let wordElement = null;
+        
+        for (const group of wordGroups) {
+          const textElement = group.querySelector('text');
+          if (textElement && textElement.textContent === word) {
+            wordElement = group;
+            break;
+          }
+        }
+        
+        if (wordElement) {
+          // Get position
+          const transform = wordElement.getAttribute('transform');
+          const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+          
+          if (match) {
+            const x = parseFloat(match[1]);
+            const y = parseFloat(match[2]);
+            
+            // Create line
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute('x1', targetVector[0]);
+            line.setAttribute('y1', targetVector[1]);
+            line.setAttribute('x2', x);
+            line.setAttribute('y2', y);
+            line.setAttribute('class', 'similarity-line');
+            line.setAttribute('stroke', '#333');
+            
+            // Add opacity based on similarity
+            const opacity = 1 - (distance / 300); // Normalize
+            line.setAttribute('opacity', opacity);
+            
+            // Add label
+            const midX = (targetVector[0] + x) / 2;
+            const midY = (targetVector[1] + y) / 2;
+            
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute('x', midX);
+            text.setAttribute('y', midY - 5);
+            text.setAttribute('class', 'small-text');
+            text.setAttribute('text-anchor', 'middle');
+            text.textContent = distance.toFixed(0);
+            
+            // Add to SVG
+            similarityLines.appendChild(line);
+            similarityLines.appendChild(text);
+          }
+        }
+      });
+    }
+    
+    // Function to place a word on the vector space
+    function placeWord(word) {
+      if (word in wordVectors) {
+        const vector = wordVectors[word];
+        
+        // Update user word position
+        userWord.setAttribute('transform', `translate(${vector[0]}, ${vector[1]})`);
+        userWordText.textContent = word;
+        userWord.setAttribute('visibility', 'visible');
+        
+        // Find closest words
+        const closestWords = findClosestWords(vector);
+        
+        // Draw similarity lines
+        drawSimilarityLines(vector, closestWords);
+        
+        // Update distance info
+        distanceInfo.textContent = `${word} is closest to: ${closestWords[0].word}`;
+        
+        // Show tooltip with info
+        tooltipText.textContent = `${word}: [${vector[0]/100}, ${vector[1]/100}]`;
+        tooltip.setAttribute('transform', `translate(${vector[0]}, ${vector[1] + 30})`);
+        tooltip.setAttribute('visibility', 'visible');
+      }
+    }
+    
+    // Button event handlers
+    document.getElementById('btn-birthday').addEventListener('click', () => {
+      placeWord('birthday');
+    });
+    
+    document.getElementById('btn-kitten').addEventListener('click', () => {
+      placeWord('kitten');
+    });
+    
+    document.getElementById('btn-funeral').addEventListener('click', () => {
+      placeWord('funeral');
+    });
+    
+    document.getElementById('btn-whale').addEventListener('click', () => {
+      placeWord('whale');
+    });
+    
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      // Clear user word
+      userWord.setAttribute('visibility', 'hidden');
+      
+      // Clear similarity lines
+      while (similarityLines.firstChild) {
+        similarityLines.removeChild(similarityLines.firstChild);
+      }
+      
+      // Hide tooltip
+      tooltip.setAttribute('visibility', 'hidden');
+      
+      // Reset distance info
+      distanceInfo.textContent = '';
+    });
+    
+    // Add hover effect to existing words
+    const existingWords = document.querySelectorAll('#word-vectors text');
+    existingWords.forEach(word => {
+      word.addEventListener('mouseover', () => {
+        word.setAttribute('font-weight', 'bold');
+        
+        // Get the position of the parent group
+        const parentGroup = word.parentElement;
+        const transform = parentGroup.getAttribute('transform');
+        const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+        
+        if (match) {
+          const x = parseFloat(match[1]);
+          const y = parseFloat(match[2]);
+          
+          // Update tooltip
+          tooltipText.textContent = `${word.textContent}: [${x/100}, ${y/100}]`;
+          tooltip.setAttribute('transform', `translate(${x}, ${y + 30})`);
+          tooltip.setAttribute('visibility', 'visible');
+        }
+      });
+      
+      word.addEventListener('mouseout', () => {
+        word.setAttribute('font-weight', 'normal');
+        
+        // Hide tooltip if user word is not visible
+        if (userWord.getAttribute('visibility') === 'hidden') {
+          tooltip.setAttribute('visibility', 'hidden');
+        }
+      });
+    });
+  ]]></script>
+</svg>
