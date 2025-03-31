@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Prediction Adventure: Learn How AI Thinks</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+        
+        h1 {
+            color: #4b0082;
+            text-align: center;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .scene {
+            display: none;
+            text-align: center;
+        }
+        
+        .scene.active {
+            display: block;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #8a2be2;
+        }
+        
+        .word-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .word-box {
+            background-color: #e6e6fa;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        .word-box:hover {
+            transform: scale(1.05);
+            background-color: #d8bfd8;
+        }
+        
+        .word-box.selected {
+            background-color: #9370db;
+            color: white;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            color: #8a2be2;
+        }
+        
+        #svg-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .explanation {
+            background-color: #f0e6ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #8a2be2;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Prediction Adventure</h1>
+    <h2>Learn How AI Thinks Like Magic!</h2>
+    
+    <div class="game-container">
+        <div id="scene1" class="scene active">
+            <h2>Welcome to Word Prediction Adventure!</h2>
+            <p>Hi there! Today we're going to learn how computers can predict words, just like magic!</p>
+            <p>Have you ever noticed how your phone suggests words when you type? That's a bit like what big AI models do, but much bigger!</p>
+            <svg id="intro-svg" width="400" height="200" viewBox="0 0 400 200">
+                <rect x="50" y="50" width="300" height="100" rx="20" fill="#e6e6fa" stroke="#9370db" stroke-width="2"/>
+                <text x="200" y="100" text-anchor="middle" font-size="24" fill="#4b0082">Word Magic!</text>
+                <circle id="sparkle1" cx="100" cy="80" r="5" fill="#ffff00"/>
+                <circle id="sparkle2" cx="300" cy="120" r="5" fill="#ffff00"/>
+                <circle id="sparkle3" cx="200" cy="70" r="5" fill="#ffff00"/>
+            </svg>
+            <div class="buttons">
+                <button onclick="nextScene()">Let's Play!</button>
+            </div>
+        </div>
+        
+        <div id="scene2" class="scene">
+            <h2>The Pattern Game</h2>
+            <p>AI learns by looking at lots and lots of words and finding patterns.</p>
+            <p>Let's play a game! Can you guess what word comes next?</p>
+            <div class="word-container">
+                <div class="word-box">I love to eat</div>
+                <div class="word-box highlight">?</div>
+            </div>
+            <div class="word-container" id="choices1">
+                <div class="word-box choice" onclick="selectWord(this, 'scene2')">rocks</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene2')">pizza</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene2')">sleep</div>
+            </div>
+            <div class="explanation" id="explanation1" style="display: none;">
+                <p>"Pizza" is a good guess! AI models learn that after "I love to eat", foods like "pizza" often come next.</p>
+                <p>This is called "predicting the next word" - the AI has seen lots of sentences and knows what words usually come after other words.</p>
+            </div>
+            <div class="buttons">
+                <button onclick="prevScene()">Back</button>
+                <button id="next2" onclick="nextScene()" disabled>Next</button>
+            </div>
+        </div>
+        
+        <div id="scene3" class="scene">
+            <h2>Learning from Patterns</h2>
+            <p>AI models learn from millions of books, stories, and websites to understand patterns.</p>
+            <p>Let's see how AI learns patterns with our word cloud:</p>
+            <svg id="svg-container" width="100%" height="300" viewBox="0 0 600 300">
+                <defs>
+                    <radialGradient id="brain-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:#f0e6ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#9370db;stop-opacity:1" />
+                    </radialGradient>
+                </defs>
+                
+                <!-- Brain shape -->
+                <ellipse cx="300" cy="150" rx="150" ry="120" fill="url(#brain-gradient)" />
+                <path d="M250,80 C220,90 210,150 240,190" stroke="#8a2be2" stroke-width="5" fill="none" />
+                <path d="M350,80 C380,90 390,150 360,190" stroke="#8a2be2" stroke-width="5" fill="none" />
+                <path d="M280,50 C290,30 310,30 320,50" stroke="#8a2be2" stroke-width="5" fill="none" />
+                
+                <!-- Words in the brain -->
+                <text x="260" y="130" font-size="16" fill="#4b0082">pizza</text>
+                <text x="320" y="150" font-size="14" fill="#4b0082">cake</text>
+                <text x="280" y="170" font-size="18" fill="#4b0082">ice cream</text>
+                <text x="230" y="150" font-size="15" fill="#4b0082">cookies</text>
+                <text x="310" y="120" font-size="14" fill="#4b0082">apples</text>
+                <text x="340" y="180" font-size="16" fill="#4b0082">candy</text>
+                <text x="260" y="100" font-size="15" fill="#4b0082">pasta</text>
+                
+                <!-- Connections -->
+                <line id="connection1" x1="260" y1="130" x2="320" y2="150" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection2" x1="320" y1="150" x2="280" y2="170" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection3" x1="280" y1="170" x2="230" y2="150" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection4" x1="230" y1="150" x2="310" y2="120" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection5" x1="310" y1="120" x2="340" y2="180" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection6" x1="340" y1="180" x2="260" y2="100" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+                <line id="connection7" x1="260" y1="100" x2="260" y2="130" stroke="#4b0082" stroke-width="1" opacity="0.6"/>
+            </svg>
+            <p>When AI sees "I love to eat" many times, it connects it with food words like "pizza" and "ice cream".</p>
+            <p>The more connections, the stronger the pattern becomes!</p>
+            <div class="buttons">
+                <button onclick="prevScene()">Back</button>
+                <button onclick="nextScene()">Next</button>
+            </div>
+        </div>
+        
+        <div id="scene4" class="scene">
+            <h2>Let's Practice Predicting!</h2>
+            <p>Now you try being an AI! Can you predict the next words based on patterns?</p>
+            
+            <div class="word-container">
+                <div class="word-box">The dog likes to</div>
+                <div class="word-box highlight">?</div>
+            </div>
+            <div class="word-container" id="choices2">
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 0)">bark</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 0)">fly</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 0)">swim</div>
+            </div>
+            
+            <div class="word-container">
+                <div class="word-box">Twinkle, twinkle, little</div>
+                <div class="word-box highlight">?</div>
+            </div>
+            <div class="word-container" id="choices3">
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 1)">house</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 1)">star</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 1)">friend</div>
+            </div>
+            
+            <div class="word-container">
+                <div class="word-box">One, two, buckle my</div>
+                <div class="word-box highlight">?</div>
+            </div>
+            <div class="word-container" id="choices4">
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 2)">shoe</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 2)">hat</div>
+                <div class="word-box choice" onclick="selectWord(this, 'scene4', 2)">door</div>
+            </div>
+            
+            <div class="explanation" id="explanation2" style="display: none;">
+                <p>Great job! You predicted like an AI!</p>
+                <p>The best answers were "bark," "star," and "shoe" because those are the most common patterns in these phrases.</p>
+                <p>AI models work the same way, but they look at billions of patterns!</p>
+            </div>
+            
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            
+            <div class="buttons">
+                <button onclick="prevScene()">Back</button>
+                <button id="next4" onclick="nextScene()" disabled>Next</button>
+            </div>
+        </div>
+        
+        <div id="scene5" class="scene">
+            <h2>Now You're a Sentence Builder!</h2>
+            <p>Let's build a sentence one word at a time, just like an AI model!</p>
+            <p>Start with: "The" and pick the next word that feels right:</p>
+            
+            <div class="word-container" id="sentence-builder">
+                <div class="word-box">The</div>
+            </div>
+            
+            <div class="word-container" id="word-choices">
+                <div class="word-box choice" onclick="addToSentence(this)">big</div>
+                <div class="word-box choice" onclick="addToSentence(this)">happy</div>
+                <div class="word-box choice" onclick="addToSentence(this)">little</div>
+            </div>
+            
+            <div class="explanation">
+                <p>This is exactly how AI models work! They choose the next word based on what they've seen before.</p>
+                <p>Each time you pick a word, the possible next words change - just like how AI predicts!</p>
+            </div>
+            
+            <div class="buttons">
+                <button onclick="prevScene()">Back</button>
+                <button onclick="nextScene()">Next</button>
+            </div>
+        </div>
+        
+        <div id="scene6" class="scene">
+            <h2>Congratulations!</h2>
+            <p>You've learned how AI predicts words, just like magic!</p>
+            <p>Remember:</p>
+            <ul>
+                <li>AI learns from patterns in lots of words</li>
+                <li>It guesses what word might come next</li>
+                <li>The more patterns it sees, the better it gets!</li>
+            </ul>
+            <svg width="400" height="200" viewBox="0 0 400 200">
+                <defs>
+                    <radialGradient id="star-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ffff00;stop-opacity:1" />
+                    </radialGradient>
+                </defs>
+                
+                <polygon id="star" points="100,10 40,198 190,78 10,78 160,198" fill="url(#star-gradient)" stroke="#ffd700" stroke-width="2" transform="translate(100, 0)"/>
+                <text x="200" y="100" text-anchor="middle" font-size="24" fill="#4b0082">You're Amazing!</text>
+            </svg>
+            <div class="buttons">
+                <button onclick="prevScene()">Back</button>
+                <button onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentScene = 1;
+        const totalScenes = 6;
+        let score = 0;
+        let selectedInScene4 = [false, false, false];
+        let availableNextWords = {
+            "The": ["big", "happy", "little"],
+            "The big": ["dog", "cat", "house"],
+            "The happy": ["family", "child", "dog"],
+            "The little": ["mouse", "girl", "boy"],
+            "The big dog": ["barked", "played", "ran"],
+            "The big cat": ["slept", "jumped", "purred"],
+            "The big house": ["stood", "looked", "was"],
+            "The happy family": ["celebrated", "smiled", "gathered"],
+            "The happy child": ["laughed", "played", "smiled"],
+            "The happy dog": ["wagged", "barked", "jumped"],
+            "The little mouse": ["scurried", "hid", "squeaked"],
+            "The little girl": ["danced", "sang", "played"],
+            "The little boy": ["ran", "jumped", "laughed"]
+        };
+        
+        // Animate sparkles in intro SVG
+        function animateSparkles() {
+            const sparkles = document.querySelectorAll('[id^="sparkle"]');
+            sparkles.forEach((sparkle, index) => {
+                const animation = sparkle.animate([
+                    { opacity: 0.2, r: 3 },
+                    { opacity: 1, r: 6 },
+                    { opacity: 0.2, r: 3 }
+                ], {
+                    duration: 2000,
+                    delay: index * 300,
+                    iterations: Infinity
+                });
+            });
+        }
+        
+        // Animate connections in brain SVG
+        function animateConnections() {
+            const connections = document.querySelectorAll('[id^="connection"]');
+            connections.forEach((connection, index) => {
+                const animation = connection.animate([
+                    { opacity: 0.2, strokeWidth: 1 },
+                    { opacity: 1, strokeWidth: 3 },
+                    { opacity: 0.2, strokeWidth: 1 }
+                ], {
+                    duration: 3000,
+                    delay: index * 400,
+                    iterations: Infinity
+                });
+            });
+        }
+        
+        function updateScene() {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            document.getElementById(`scene${currentScene}`).classList.add('active');
+            
+            if (currentScene === 1) {
+                setTimeout(animateSparkles, 500);
+            } else if (currentScene === 3) {
+                setTimeout(animateConnections, 500);
+            } else if (currentScene === 5) {
+                updateWordChoices("The");
+            }
+        }
+        
+        function nextScene() {
+            if (currentScene < totalScenes) {
+                currentScene++;
+                updateScene();
+            }
+        }
+        
+        function prevScene() {
+            if (currentScene > 1) {
+                currentScene--;
+                updateScene();
+            }
+        }
+        
+        function selectWord(element, sceneId, index) {
+            const choices = document.querySelectorAll(`#${sceneId} .choice`);
+            choices.forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            if (sceneId === 'scene2') {
+                document.getElementById('explanation1').style.display = 'block';
+                document.getElementById('next2').disabled = false;
+            } else if (sceneId === 'scene4') {
+                selectedInScene4[index] = true;
+                updateProgressBar();
+                if (selectedInScene4.every(selected => selected)) {
+                    document.getElementById('explanation2').style.display = 'block';
+                    document.getElementById('next4').disabled = false;
+                }
+            }
+        }
+        
+        function updateProgressBar() {
+            const selected = selectedInScene4.filter(s => s).length;
+            const percentage = (selected / 3) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+        
+        function addToSentence(element) {
+            const wordText = element.textContent;
+            const sentenceBuilder = document.getElementById('sentence-builder');
+            const currentSentence = Array.from(sentenceBuilder.querySelectorAll('.word-box'))
+                                         .map(box => box.textContent)
+                                         .join(' ');
+            
+            // Add the selected word to the sentence
+            const newWordBox = document.createElement('div');
+            newWordBox.className = 'word-box';
+            newWordBox.textContent = wordText;
+            sentenceBuilder.appendChild(newWordBox);
+            
+            // Update available word choices
+            const newSentence = currentSentence + ' ' + wordText;
+            updateWordChoices(newSentence.trim());
+        }
+        
+        function updateWordChoices(sentence) {
+            const wordChoices = document.getElementById('word-choices');
+            wordChoices.innerHTML = '';
+            
+            if (availableNextWords[sentence]) {
+                availableNextWords[sentence].forEach(word => {
+                    const wordBox = document.createElement('div');
+                    wordBox.className = 'word-box choice';
+                    wordBox.textContent = word;
+                    wordBox.addEventListener('click', function() {
+                        addToSentence(this);
+                    });
+                    wordChoices.appendChild(wordBox);
+                });
+            } else {
+                // End of available choices
+                const endMessage = document.createElement('p');
+                endMessage.textContent = "Great sentence! You've completed this part.";
+                wordChoices.appendChild(endMessage);
+            }
+        }
+        
+        function restartGame() {
+            currentScene = 1;
+            score = 0;
+            selectedInScene4 = [false, false, false];
+            
+            // Reset all selections
+            document.querySelectorAll('.choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            
+            // Hide explanations
+            document.getElementById('explanation1').style.display = 'none';
+            document.getElementById('explanation2').style.display = 'none';
+            
+            // Reset progress bar
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            // Reset sentence builder
+            const sentenceBuilder = document.getElementById('sentence-builder');
+            sentenceBuilder.innerHTML = '<div class="word-box">The</div>';
+            
+            // Disable next buttons
+            document.getElementById('next2').disabled = true;
+            document.getElementById('next4').disabled = true;
+            
+            updateScene();
+        }
+        
+        // Initialize the game
+        window.onload = function() {
+            updateScene();
+        };
+    </script>
+</body>
+</html>
